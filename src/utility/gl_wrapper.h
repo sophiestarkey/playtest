@@ -1,8 +1,15 @@
 #pragma once
 
 #include <glad/gl.h>
+#include <stdexcept>
 
 namespace GL {
+    class Exception : public std::runtime_error {
+    public:
+        Exception(const std::string& message);
+        Exception(const char* message);
+    };
+
     class Buffer {
     public:
         Buffer();

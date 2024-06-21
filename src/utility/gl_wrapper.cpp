@@ -1,9 +1,16 @@
-#include <stdexcept>
 #include <utility>
 
 #include "gl_wrapper.h"
 
 namespace GL {
+    Exception::Exception(const std::string& message) : std::runtime_error(message)
+    {
+    }
+
+    Exception::Exception(const char* message) : std::runtime_error(message)
+    {
+    }
+
     Buffer::Buffer()
     {
         glGenBuffers(1, &m_id);
@@ -35,6 +42,9 @@ namespace GL {
 
     Program::Program() : m_id(glCreateProgram())
     {
+        if (!m_id) {
+            throw Exception("Failed to create program object");
+        }
     }
 
     Program::~Program()
@@ -63,6 +73,9 @@ namespace GL {
 
     Shader::Shader(GLenum type) : m_id(glCreateShader(type))
     {
+        if (!m_id) {
+            throw Exception("Failed to create shader object");
+        }
     }
 
     Shader::~Shader()
@@ -134,7 +147,7 @@ namespace GL {
         if (!success) {
             char info_log[512];
             glGetShaderInfoLog(shader, 512, nullptr, info_log);
-            throw std::runtime_error(std::string("Failed to compile shader: ") + info_log);
+            throw Exception(std::string("Failed to compile shader: ") + info_log);
         }
     }
 
@@ -148,7 +161,7 @@ namespace GL {
         if (!success) {
             char info_log[512];
             glGetProgramInfoLog(program, 512, nullptr, info_log);
-            throw std::runtime_error(std::string("Failed to link program: ") + info_log);
+            throw Exception(std::string("Failed to link program: ") + info_log);
         }
     }
 }
