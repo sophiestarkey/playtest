@@ -135,11 +135,13 @@
   <ItemGroup>
     <ClCompile Include="src\gl.c" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\renderer\mesh_renderer.cpp" />
     <ClCompile Include="src\stb_image.c" />
     <ClCompile Include="src\utility\file_io.cpp" />
     <ClCompile Include="src\utility\gl_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\renderer\mesh_renderer.h" />
     <ClInclude Include="src\utility\file_io.h" />
     <ClInclude Include="src\utility\gl_wrapper.h" />
   </ItemGroup>
