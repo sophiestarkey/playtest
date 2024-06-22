@@ -102,6 +102,35 @@ namespace GL {
         return m_id;
     }
 
+    Texture::Texture()
+    {
+        glGenTextures(1, &m_id);
+    }
+
+    Texture::~Texture()
+    {
+        glDeleteTextures(1, &m_id);
+    }
+
+    Texture::Texture(Texture&& rhs) noexcept : m_id(std::exchange(rhs.m_id, 0))
+    {
+    }
+
+    Texture& Texture::operator=(Texture&& rhs) noexcept
+    {
+        if (this != &rhs) {
+            glDeleteTextures(1, &m_id);
+            m_id = std::exchange(rhs.m_id, 0);
+        }
+
+        return *this;
+    }
+
+    Texture::operator GLuint() const
+    {
+        return m_id;
+    }
+
     VertexArray::VertexArray()
     {
         glGenVertexArrays(1, &m_id);

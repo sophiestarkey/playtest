@@ -58,6 +58,22 @@ namespace GL {
         GLuint m_id;
     };
 
+    class Texture {
+    public:
+        Texture();
+        ~Texture();
+
+        Texture(const Texture&) = delete;
+        Texture& operator=(const Texture&) = delete;
+
+        Texture(Texture&& rhs) noexcept;
+        Texture& operator=(Texture&& rhs) noexcept;
+
+        operator GLuint() const;
+    private:
+        GLuint m_id;
+    };
+
     class VertexArray {
     public:
         VertexArray();
