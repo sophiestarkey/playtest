@@ -1,9 +1,7 @@
 #pragma once
 
-#include <glm/vec2.hpp>
 #include <stb/stb_image.h>
 #include <string>
-#include <vector>
 
 enum class ImageFormat : int {
     USE_DEFAULT = 0,
