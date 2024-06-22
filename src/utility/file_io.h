@@ -26,12 +26,12 @@ public:
 
     int width() const;
     int height() const;
-    int num_channels() const;
+    ImageFormat format() const;
     stbi_uc* data() const;
 private:
     int m_width;
     int m_height;
-    int m_num_channels;
+    ImageFormat m_format;
     stbi_uc* m_data;
 };
 

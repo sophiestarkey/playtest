@@ -14,7 +14,11 @@ Image::Image(const std::string& path, ImageFormat format)
         throw std::runtime_error(std::string("Failed to load image '") + path + "': " + stbi_failure_reason());
     }
 
-    m_num_channels = (format == ImageFormat::USE_DEFAULT) ? channels_in_file : static_cast<int>(format);
+    if (format == ImageFormat::USE_DEFAULT) {
+        m_format = static_cast<ImageFormat>(channels_in_file);
+    } else {
+        m_format = format;
+    }
 }
 
 Image::~Image()
@@ -27,7 +31,7 @@ Image::~Image()
 Image::Image(Image&& rhs) noexcept :
     m_width(std::exchange(rhs.m_width, 0)),
     m_height(std::exchange(rhs.m_height, 0)),
-    m_num_channels(std::exchange(rhs.m_num_channels, 0)),
+    m_format(std::exchange(rhs.m_format, ImageFormat::USE_DEFAULT)),
     m_data(std::exchange(rhs.m_data, nullptr))
 {
 }
@@ -41,7 +45,7 @@ Image& Image::operator=(Image&& rhs) noexcept
 
         m_width = std::exchange(rhs.m_width, 0);
         m_height = std::exchange(rhs.m_height, 0);
-        m_num_channels = std::exchange(rhs.m_num_channels, 0);
+        m_format = std::exchange(rhs.m_format, ImageFormat::USE_DEFAULT);
         m_data = std::exchange(rhs.m_data, nullptr);
     }
 
@@ -58,9 +62,9 @@ int Image::height() const
     return m_height;
 }
 
-int Image::num_channels() const
+ImageFormat Image::format() const
 {
-    return m_num_channels;
+    return m_format;
 }
 
 stbi_uc* Image::data() const
