@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="src\gl.c" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\stb_image.c" />
     <ClCompile Include="src\utility\file_io.cpp" />
     <ClCompile Include="src\utility\gl_wrapper.cpp" />
   </ItemGroup>
