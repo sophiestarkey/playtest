@@ -28,7 +28,7 @@ Geometry::Geometry(const std::string& path)
             m_vertices.push_back(vertex);
         }
 
-        unsigned indices_offset = m_indices.size();
+        unsigned indices_offset = static_cast<unsigned>(m_indices.size());
 
         for (unsigned j = 0; j < mesh->mNumFaces; j++) {
             aiFace face = mesh->mFaces[j];
