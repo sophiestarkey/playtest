@@ -4,13 +4,13 @@
 #include <cstdlib>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <stb/stb_image.h>
 #include <vector>
 
 #include "renderer/camera.h"
 #include "renderer/mesh_renderer.h"
+#include "renderer/transform.h"
 #include "utility/file_io.h"
 #include "utility/gl_wrapper.h"
 
@@ -111,18 +111,37 @@ void run()
 {
     Camera camera;
     MeshRenderer mesh_renderer;
-    Mesh mesh = load_mesh("res/models/suzanne.obj");
+    Mesh terrain = load_mesh("res/models/terrain.obj");
+    Mesh player = load_mesh("res/models/suzanne.obj");
+    Transform player_transform;
     
     glfwSwapInterval(1);
 
-    while (!glfwWindowShouldClose(window)) {
-        int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
+    double last_frame = glfwGetTime();
 
-        // temporary hack to avoid GLM assertion error when aspect ratio = 0
-        if (width != 0 && height != 0) {
-            glViewport(0, 0, width, height);
-            camera.set_aspect_ratio(static_cast<float>(width) / height);
+    while (!glfwWindowShouldClose(window)) {
+        double current_frame = glfwGetTime();
+        float dt = static_cast<float>(current_frame - last_frame);
+        last_frame = current_frame;
+
+        float movement_speed = 4.0f * dt;
+        float rotation_speed = 180.0f * dt;
+
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) player_transform.translate(player_transform.forward() * movement_speed);
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) player_transform.translate(player_transform.right() * movement_speed);
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) player_transform.translate(-player_transform.forward() * movement_speed);
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) player_transform.translate(-player_transform.right() * movement_speed);
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) player_transform.rotate(rotation_speed, glm::vec3(0.0f, 1.0f, 0.0f));
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) player_transform.rotate(-rotation_speed, glm::vec3(0.0f, 1.0f, 0.0f));
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) player_transform.rotate(-rotation_speed, player_transform.right());
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) player_transform.rotate(rotation_speed, player_transform.right());
+
+        int window_width, window_height;
+        glfwGetFramebufferSize(window, &window_width, &window_height);
+
+        if (window_width > 0 && window_height > 0) {
+            glViewport(0, 0, window_width, window_height);
+            camera.set_aspect_ratio(static_cast<float>(window_width) / window_height);
         }
 
         camera.set_position({0.0f, 12.0f, 12.0f});
@@ -134,9 +153,10 @@ void run()
         mesh_renderer.set_projection_matrix(camera.projection_matrix());
         mesh_renderer.set_view_matrix(camera.view_matrix());
 
-        glm::mat4 model_mat = glm::mat4(1.0f);
-        mesh_renderer.set_model_matrix(model_mat);
-        mesh_renderer.draw(mesh);
+        mesh_renderer.set_model_matrix(player_transform.get_matrix());
+        mesh_renderer.draw(player);
+        mesh_renderer.set_model_matrix(glm::mat4(1.0f));
+        mesh_renderer.draw(terrain);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
