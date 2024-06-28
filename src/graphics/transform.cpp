@@ -62,6 +62,26 @@ void Transform::scale(const glm::vec3& scale)
     m_recalculate = true;
 }
 
+const glm::vec3& Transform::get_pivot() const
+{
+    return m_pivot;
+}
+
+const glm::vec3& Transform::get_position() const
+{
+    return m_position;
+}
+
+const glm::quat& Transform::get_orientation() const
+{
+    return m_orientation;
+}
+
+const glm::vec3& Transform::get_scale() const
+{
+    return m_scale;
+}
+
 glm::vec3 Transform::right() const
 {
     return m_orientation * glm::vec3(1.0f, 0.0f, 0.0f);

@@ -6,8 +6,8 @@
 
 #include "graphics/mesh.h"
 #include "graphics/mesh_shader.h"
+#include "graphics/transform.h"
 #include "renderer/camera.h"
-#include "renderer/transform.h"
 #include "utility/file_io.h"
 #include "utility/gl_wrapper.h"
 
