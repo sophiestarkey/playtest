@@ -19,9 +19,9 @@ public:
     void rotate(float angle, const glm::vec3& axis);
     void scale(const glm::vec3& scale);
 
-    const glm::vec3& right() const;
-    const glm::vec3& up() const;
-    const glm::vec3& forward() const;
+    glm::vec3 right() const;
+    glm::vec3 up() const;
+    glm::vec3 forward() const;
     const glm::mat4& get_matrix() const;
 private:
     mutable glm::mat4 m_matrix;

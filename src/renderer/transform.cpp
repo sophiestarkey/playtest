@@ -62,17 +62,17 @@ void Transform::scale(const glm::vec3& scale)
     m_recalculate = true;
 }
 
-const glm::vec3& Transform::right() const
+glm::vec3 Transform::right() const
 {
     return m_orientation * glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
-const glm::vec3& Transform::up() const
+glm::vec3 Transform::up() const
 {
     return m_orientation * glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
-const glm::vec3& Transform::forward() const
+glm::vec3 Transform::forward() const
 {
     return m_orientation * glm::vec3(0.0f, 0.0f, 1.0f);
 }
