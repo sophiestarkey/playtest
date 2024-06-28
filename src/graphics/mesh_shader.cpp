@@ -1,9 +1,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../utility/file_io.h"
-#include "mesh_renderer.h"
+#include "mesh_shader.h"
 
-MeshRenderer::MeshRenderer()
+MeshShader::MeshShader()
 {
     GL::Shader vertex_shader(GL_VERTEX_SHADER);
     GL::ShaderSource(vertex_shader, ReadFile("res/shaders/basic_rim.vert"));
@@ -22,40 +22,29 @@ MeshRenderer::MeshRenderer()
     m_proj_mat_loc = glGetUniformLocation(m_program, "u_projection_mat");
     m_view_mat_loc = glGetUniformLocation(m_program, "u_view_mat");
     m_model_mat_loc = glGetUniformLocation(m_program, "u_model_mat");
-
-//  glBindTexture(GL_TEXTURE_2D, m_texture);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-//  Image image("res/textures/matcap_basic.png", ImageFormat::RGB);
-//  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width(), image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.data());
-//  glGenerateMipmap(GL_TEXTURE_2D);
+    m_color_loc = glGetUniformLocation(m_program, "u_color");
 }
 
-void MeshRenderer::begin()
+void MeshShader::use()
 {
     glUseProgram(m_program);
-//  glBindTexture(GL_TEXTURE_2D, m_texture);
 }
 
-void MeshRenderer::set_projection_matrix(const glm::mat4& matrix)
+void MeshShader::set_projection_matrix(const glm::mat4& matrix)
 {
     glUniformMatrix4fv(m_proj_mat_loc, 1, false, glm::value_ptr(matrix));
 }
 
-void MeshRenderer::set_view_matrix(const glm::mat4& matrix)
+void MeshShader::set_view_matrix(const glm::mat4& matrix)
 {
     glUniformMatrix4fv(m_view_mat_loc, 1, false, glm::value_ptr(matrix));
 }
-void MeshRenderer::set_model_matrix(const glm::mat4& matrix)
+void MeshShader::set_model_matrix(const glm::mat4& matrix)
 {
     glUniformMatrix4fv(m_model_mat_loc, 1, false, glm::value_ptr(matrix));
 }
 
-void MeshRenderer::draw(Mesh& mesh)
+void MeshShader::set_color(const glm::vec3& color)
 {
-    glBindVertexArray(mesh.vao);
-    glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
+    glUniform3fv(m_color_loc, 1, glm::value_ptr(color));
 }

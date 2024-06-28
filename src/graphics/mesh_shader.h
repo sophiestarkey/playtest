@@ -4,29 +4,21 @@
 
 #include "../utility/gl_wrapper.h"
 
-struct Mesh {
-    GL::VertexArray vao;
-    GL::Buffer vbo;
-    GL::Buffer ebo;
-    GLuint count;
-};
-
-class MeshRenderer {
+class MeshShader {
 public:
-    MeshRenderer();
+    MeshShader();
 
-    void begin();
+    void use();
 
     void set_projection_matrix(const glm::mat4& matrix);
     void set_view_matrix(const glm::mat4& matrix);
     void set_model_matrix(const glm::mat4& matrix);
-
-    void draw(Mesh& mesh);
+    void set_color(const glm::vec3& color);
 private:
     GL::Program m_program;
-//  GL::Texture m_texture;
 
     GLint m_proj_mat_loc;
     GLint m_view_mat_loc;
     GLint m_model_mat_loc;
+    GLint m_color_loc;
 };
