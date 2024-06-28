@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\geometry\geometry.cpp" />
     <ClCompile Include="src\gl.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer\camera.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="src\utility\gl_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\geometry\geometry.h" />
     <ClInclude Include="src\renderer\camera.h" />
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\mesh_shader.h" />
