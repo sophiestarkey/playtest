@@ -1,75 +1,17 @@
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
 #include <cstdlib>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <stb/stb_image.h>
 #include <vector>
 
+#include "graphics/mesh.h"
+#include "graphics/mesh_shader.h"
 #include "renderer/camera.h"
-#include "renderer/mesh_renderer.h"
 #include "renderer/transform.h"
 #include "utility/file_io.h"
 #include "utility/gl_wrapper.h"
 
 GLFWwindow* window;
-
-Mesh load_mesh(const std::string& path)
-{
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenNormals);
-
-    if (!scene) {
-        throw std::runtime_error(std::string("Failed to load mesh '") + path + "': " + importer.GetErrorString());
-    }
-
-    std::vector<float> vertices;
-    std::vector<unsigned> elements;
-
-    for (unsigned i = 0; i < scene->mNumMeshes; i++) {
-        const aiMesh* mesh = scene->mMeshes[i];
-        for (unsigned j = 0; j < mesh->mNumVertices; j++) {
-            aiVector3D vertex = mesh->mVertices[j];
-            aiVector3D normal = mesh->mNormals[j];
-
-            vertices.push_back(vertex.x);
-            vertices.push_back(vertex.y);
-            vertices.push_back(vertex.z);
-            vertices.push_back(normal.x);
-            vertices.push_back(normal.y);
-            vertices.push_back(normal.z);
-        }
-
-        unsigned index_offset = elements.size();
-
-        for (unsigned j = 0; j < mesh->mNumFaces; j++) {
-            aiFace face = mesh->mFaces[j];
-
-            for (unsigned k = 0; k < face.mNumIndices; k++) {
-                elements.push_back(face.mIndices[k] + index_offset);
-            }
-        }
-    }
-
-    Mesh mesh;
-    mesh.count = elements.size();
-
-    glBindVertexArray(mesh.vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(unsigned), elements.data(), GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-
-    return mesh;
-}
 
 void error_callback(int error_code, const char* description)
 {
@@ -102,7 +44,6 @@ void init()
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
-    stbi_set_flip_vertically_on_load(true);
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 }
@@ -110,9 +51,9 @@ void init()
 void run()
 {
     Camera camera;
-    MeshRenderer mesh_renderer;
-    Mesh terrain = load_mesh("res/models/terrain.obj");
-    Mesh player = load_mesh("res/models/suzanne.obj");
+    MeshShader mesh_shader;
+    Mesh terrain("res/models/terrain.obj");
+    Mesh player("res/models/suzanne.obj");
     Transform player_transform;
     
     glfwSwapInterval(1);
@@ -149,14 +90,17 @@ void run()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-        mesh_renderer.begin();
-        mesh_renderer.set_projection_matrix(camera.projection_matrix());
-        mesh_renderer.set_view_matrix(camera.view_matrix());
+        mesh_shader.use();
+        mesh_shader.set_projection_matrix(camera.projection_matrix());
+        mesh_shader.set_view_matrix(camera.view_matrix());
 
-        mesh_renderer.set_model_matrix(player_transform.get_matrix());
-        mesh_renderer.draw(player);
-        mesh_renderer.set_model_matrix(glm::mat4(1.0f));
-        mesh_renderer.draw(terrain);
+        mesh_shader.set_color(glm::vec3(1.0f, 0.5f, 0.5f));
+        mesh_shader.set_model_matrix(player_transform.get_matrix());
+        player.draw();
+
+        mesh_shader.set_color(glm::vec3(1.0f, 1.0f, 1.0f));
+        mesh_shader.set_model_matrix(glm::mat4(1.0f));
+        terrain.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
