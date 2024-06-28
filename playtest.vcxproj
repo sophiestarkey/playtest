@@ -139,7 +139,7 @@
     <ClCompile Include="src\renderer\camera.cpp" />
     <ClCompile Include="src\graphics\mesh.cpp" />
     <ClCompile Include="src\graphics\mesh_shader.cpp" />
-    <ClCompile Include="src\renderer\transform.cpp" />
+    <ClCompile Include="src\graphics\transform.cpp" />
     <ClCompile Include="src\stb_image.c" />
     <ClCompile Include="src\utility\file_io.cpp" />
     <ClCompile Include="src\utility\gl_wrapper.cpp" />
@@ -149,7 +149,7 @@
     <ClInclude Include="src\renderer\camera.h" />
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\mesh_shader.h" />
-    <ClInclude Include="src\renderer\transform.h" />
+    <ClInclude Include="src\graphics\transform.h" />
     <ClInclude Include="src\utility\file_io.h" />
     <ClInclude Include="src\utility\gl_wrapper.h" />
   </ItemGroup>

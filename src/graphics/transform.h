@@ -19,6 +19,11 @@ public:
     void rotate(float angle, const glm::vec3& axis);
     void scale(const glm::vec3& scale);
 
+    const glm::vec3& get_pivot() const;
+    const glm::vec3& get_position() const;
+    const glm::quat& get_orientation() const;
+    const glm::vec3& get_scale() const;
+
     glm::vec3 right() const;
     glm::vec3 up() const;
     glm::vec3 forward() const;
