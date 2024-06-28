@@ -10,6 +10,54 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& eleme
     init(vertices, elements);
 }
 
+Mesh::Mesh(const Geometry& geometry, bool use_face_normals)
+{
+    std::vector<Vertex> vertices;
+    std::vector<GLuint> elements;
+
+    if (use_face_normals) {
+        for (const Face& face : geometry.faces()) {
+            Vertex v0 = geometry.vertices().at(face.m_indices[0]);
+            v0.m_normal = face.m_normal;
+
+            for (unsigned i = 2; i < face.m_num_indices; i++) {
+                Vertex v1 = geometry.vertices().at(face.m_indices[i - 1]);
+                Vertex v2 = geometry.vertices().at(face.m_indices[i]);
+                v1.m_normal = face.m_normal;
+                v2.m_normal = face.m_normal;
+
+                elements.push_back(static_cast<GLuint>(vertices.size()));
+                elements.push_back(static_cast<GLuint>(vertices.size() + 1));
+                elements.push_back(static_cast<GLuint>(vertices.size() + 2));
+
+                vertices.push_back(v0);
+                vertices.push_back(v1);
+                vertices.push_back(v2);
+            }
+        }
+    }
+    else {
+        for (const Vertex& vertex : geometry.vertices()) {
+            vertices.push_back(vertex);
+        }
+
+        for (const Face& face : geometry.faces()) {
+            unsigned v0 = face.m_indices[0];
+
+            for (unsigned i = 2; i < face.m_num_indices; i++) {
+                unsigned v1 = face.m_indices[i - 1];
+                unsigned v2 = face.m_indices[i];
+
+                elements.push_back(v0);
+                elements.push_back(v1);
+                elements.push_back(v2);
+            }
+        }
+    }
+
+    init(vertices, elements);
+}
+
 Mesh::Mesh(const std::string& path)
 {
     Assimp::Importer importer;
@@ -35,7 +83,7 @@ Mesh::Mesh(const std::string& path)
             vertices.push_back(vertex);
         }
 
-        unsigned element_offset = elements.size();
+        unsigned element_offset = static_cast<unsigned>(elements.size());
 
         for (unsigned j = 0; j < mesh->mNumFaces; j++) {
             aiFace face = mesh->mFaces[j];
@@ -51,7 +99,7 @@ Mesh::Mesh(const std::string& path)
 
 void Mesh::init(const std::vector<Vertex>& vertices, const std::vector<GLuint>& elements)
 {
-    m_num_elements = elements.size();
+    m_num_elements = static_cast<GLuint>(elements.size());
 
     glBindVertexArray(m_vao);
 
