@@ -94,7 +94,7 @@ glm::vec3 Transform::up() const
 
 glm::vec3 Transform::forward() const
 {
-    return m_orientation * glm::vec3(0.0f, 0.0f, 1.0f);
+    return m_orientation * glm::vec3(0.0f, 0.0f, -1.0f);
 }
 
 const glm::mat4& Transform::get_matrix() const

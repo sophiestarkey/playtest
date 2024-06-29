@@ -69,13 +69,13 @@ void run()
         float rotation_speed = 180.0f * dt;
 
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) player_transform.translate(player_transform.forward() * movement_speed);
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) player_transform.translate(player_transform.right() * movement_speed);
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) player_transform.translate(-player_transform.right() * movement_speed);
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) player_transform.translate(-player_transform.forward() * movement_speed);
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) player_transform.translate(-player_transform.right() * movement_speed);
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) player_transform.translate(player_transform.right() * movement_speed);
         if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) player_transform.rotate(rotation_speed, glm::vec3(0.0f, 1.0f, 0.0f));
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) player_transform.rotate(-rotation_speed, glm::vec3(0.0f, 1.0f, 0.0f));
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) player_transform.rotate(-rotation_speed, player_transform.right());
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) player_transform.rotate(rotation_speed, player_transform.right());
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) player_transform.rotate(rotation_speed, player_transform.right());
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) player_transform.rotate(-rotation_speed, player_transform.right());
 
         int window_width, window_height;
         glfwGetFramebufferSize(window, &window_width, &window_height);
