@@ -4,10 +4,10 @@
 #include <iostream>
 #include <vector>
 
+#include "graphics/camera.h"
 #include "graphics/mesh.h"
 #include "graphics/mesh_shader.h"
 #include "graphics/transform.h"
-#include "renderer/camera.h"
 #include "utility/file_io.h"
 #include "utility/gl_wrapper.h"
 
@@ -55,10 +55,15 @@ void run()
     Mesh terrain("res/models/terrain.obj");
     Mesh player("res/models/suzanne.obj");
     Transform player_transform;
+
+    camera.get_transform().set_origin({0.0f, 0.0f, -12.0f});
+    camera.get_transform().set_orientation(-10.0f, {1.0f, 0.0f, 0.0f});
     
     glfwSwapInterval(1);
 
     double last_frame = glfwGetTime();
+    glm::tvec2<double> last_cursor_pos;
+    glfwGetCursorPos(window, &last_cursor_pos.x, &last_cursor_pos.y);
 
     while (!glfwWindowShouldClose(window)) {
         double current_frame = glfwGetTime();
@@ -79,6 +84,20 @@ void run()
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) player_transform.rotate(rotation_speed, player_transform.right());
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) player_transform.rotate(-rotation_speed, player_transform.right());
 
+        glm::tvec2<double> current_cursor_pos;
+        glfwGetCursorPos(window, &current_cursor_pos.x, &current_cursor_pos.y);
+        glm::tvec2<double> cursor_delta = current_cursor_pos - last_cursor_pos;
+        last_cursor_pos = current_cursor_pos;
+
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            const float sensitivity = 0.1f;
+            camera.get_transform().rotate(-cursor_delta.x * sensitivity, glm::vec3(0.0f, 1.0f, 0.0f));
+            camera.get_transform().rotate(-cursor_delta.y * sensitivity, camera.get_transform().right());
+        } else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+
         int window_width, window_height;
         glfwGetFramebufferSize(window, &window_width, &window_height);
 
@@ -87,14 +106,11 @@ void run()
             camera.set_aspect_ratio(static_cast<float>(window_width) / window_height);
         }
 
-        camera.set_position({0.0f, 12.0f, 12.0f});
-        camera.set_orientation(-45.0f, {1.0f, 0.0f, 0.0f});
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
         mesh_shader.use();
-        mesh_shader.set_projection_matrix(camera.projection_matrix());
-        mesh_shader.set_view_matrix(camera.view_matrix());
+        mesh_shader.set_projection_matrix(camera.get_projection_matrix());
+        mesh_shader.set_view_matrix(camera.get_transform().get_inverse_matrix());
 
         mesh_shader.set_color(glm::vec3(1.0f, 0.5f, 0.5f));
         mesh_shader.set_model_matrix(player_transform.get_matrix());
