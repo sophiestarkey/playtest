@@ -3,6 +3,8 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/mat4x4.hpp>
 
+#include "../graphics/transform.h"
+
 class Camera {
 public:
     Camera();
@@ -12,23 +14,17 @@ public:
     void set_near_plane(float near_plane);
     void set_far_plane(float far_plane);
 
-    void set_position(const glm::vec3& position);
-    void set_orientation(float angle, const glm::vec3& axis);
-
-    const glm::mat4& projection_matrix() const;
-    const glm::mat4& view_matrix() const;
+    const glm::mat4& get_projection_matrix() const;
+    Transform& get_transform();
 private:
-    mutable glm::mat4 m_proj_mat;
-    mutable glm::mat4 m_view_mat;
+    Transform m_transform;
+    mutable glm::mat4 m_projection_matrix;
 
     float m_aspect_ratio;
     float m_field_of_view;
     float m_near_plane;
     float m_far_plane;
 
-    glm::vec3 m_position;
-    glm::quat m_orientation;
-
-    mutable bool m_recalc_proj;
+    mutable bool m_recalculate;
     mutable bool m_recalc_view;
 };
