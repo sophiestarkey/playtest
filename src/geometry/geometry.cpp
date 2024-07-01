@@ -9,7 +9,7 @@
 Geometry::Geometry(const std::string& path)
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_GenNormals | aiProcess_JoinIdenticalVertices);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_JoinIdenticalVertices);
 
     if (!scene) {
         throw std::runtime_error(std::string("Failed to read '") + path + "': " + importer.GetErrorString());
