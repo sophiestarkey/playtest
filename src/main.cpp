@@ -12,6 +12,7 @@
 #include "utility/gl_wrapper.h"
 
 GLFWwindow* window;
+glm::dvec2 scroll_delta;
 
 // adapted from https://stackoverflow.com/a/42752998
 bool intersect_triangle(const glm::vec3& O, const glm::vec3& D, const glm::vec3& a, const glm::vec3& b, const glm::vec3& c)
@@ -56,6 +57,11 @@ void error_callback(int error_code, const char* description)
     throw std::runtime_error(description);
 }
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    scroll_delta = { xoffset, yoffset };
+}
+
 void init()
 {
     glfwSetErrorCallback(error_callback);
@@ -82,6 +88,7 @@ void init()
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
+    glfwSetScrollCallback(window, scroll_callback);
     glfwSwapInterval(1);
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -96,8 +103,7 @@ void run()
     Mesh player("res/models/suzanne.obj");
     Transform player_transform;
 
-    camera.get_transform().set_origin({0.0f, 0.0f, -12.0f});
-    camera.get_transform().set_orientation(-10.0f, {1.0f, 0.0f, 0.0f});
+    float camera_zoom = 4.0f;
 
     double last_frame = glfwGetTime();
     glm::dvec2 last_cursor_pos;
@@ -112,6 +118,11 @@ void run()
         glfwGetCursorPos(window, &current_cursor_pos.x, &current_cursor_pos.y);
         glm::dvec2 cursor_delta = current_cursor_pos - last_cursor_pos;
         last_cursor_pos = current_cursor_pos;
+
+        const float zoom_sensitivity = 0.1f;
+        camera_zoom += static_cast<float>(-scroll_delta.y) * zoom_sensitivity;
+        camera.get_transform().set_origin(glm::vec3(0.0f, 0.0f, -1.0f) * glm::pow(2.0f, camera_zoom));
+        scroll_delta = { 0.0f, 0.0f };
 
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
