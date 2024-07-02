@@ -98,7 +98,7 @@ void run()
 {
     Camera camera;
     MeshShader mesh_shader;
-    Geometry terrain_geometry("res/models/grandure.obj");
+    CollisionMesh terrain_geometry("res/models/grandure.obj");
     Mesh terrain(terrain_geometry);
     Mesh player("res/models/suzanne.obj");
     Transform player_transform;
@@ -161,14 +161,15 @@ void run()
         do {
             collision = false;
 
-            for (const Face& face : terrain_geometry.faces()) {
-                glm::vec3 v0 = terrain_geometry.vertices().at(face.m_indices[0]).m_position;
-                glm::vec3 v1 = terrain_geometry.vertices().at(face.m_indices[1]).m_position;
-                glm::vec3 v2 = terrain_geometry.vertices().at(face.m_indices[2]).m_position;
+            for (const Triangle& triangle : terrain_geometry.triangles()) {
+                glm::vec3 v0 = triangle.m_vertices.at(0);
+                glm::vec3 v1 = triangle.m_vertices.at(1);
+                glm::vec3 v2 = triangle.m_vertices.at(2);
+                glm::vec3 N = glm::normalize(glm::cross(v1 - v0, v2 - v0));
 
                 if (intersect_triangle(player_transform.get_position(), player_velocity, v0, v1, v2)) {
-                    glm::vec3 new_position = intersect_ray_plane(player_transform.get_position(), glm::normalize(player_velocity), face.m_normal, glm::dot(face.m_normal, v0));
-                    glm::vec3 new_velocity = face.m_normal * -signed_distance_to_plane(player_transform.get_position() + player_velocity, face.m_normal, glm::dot(face.m_normal, v0));
+                    glm::vec3 new_position = intersect_ray_plane(player_transform.get_position(), glm::normalize(player_velocity), N, glm::dot(N, v0));
+                    glm::vec3 new_velocity = N * -signed_distance_to_plane(player_transform.get_position() + player_velocity, N, glm::dot(N, v0));
                     player_transform.set_position(new_position);
                     player_velocity = new_velocity;
                     collision = true;

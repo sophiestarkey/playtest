@@ -1,6 +1,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+#include <glm/geometric.hpp>
 #include <stdexcept>
 
 #include "mesh.h"
@@ -10,49 +11,28 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& eleme
     init(vertices, elements);
 }
 
-Mesh::Mesh(const Geometry& geometry, bool use_face_normals)
+Mesh::Mesh(const CollisionMesh& geometry)
 {
     std::vector<Vertex> vertices;
     std::vector<GLuint> elements;
 
-    if (use_face_normals) {
-        for (const Face& face : geometry.faces()) {
-            Vertex v0 = geometry.vertices().at(face.m_indices[0]);
-            v0.m_normal = face.m_normal;
+    for (const Triangle& triangle : geometry.triangles()) {
+        Vertex v0, v1, v2;
 
-            for (unsigned i = 2; i < face.m_num_indices; i++) {
-                Vertex v1 = geometry.vertices().at(face.m_indices[i - 1]);
-                Vertex v2 = geometry.vertices().at(face.m_indices[i]);
-                v1.m_normal = face.m_normal;
-                v2.m_normal = face.m_normal;
+        v0.m_position = triangle.m_vertices[0];
+        v1.m_position = triangle.m_vertices[1];
+        v2.m_position = triangle.m_vertices[2];
 
-                elements.push_back(static_cast<GLuint>(vertices.size()));
-                elements.push_back(static_cast<GLuint>(vertices.size() + 1));
-                elements.push_back(static_cast<GLuint>(vertices.size() + 2));
+        glm::vec3 N = glm::normalize(glm::cross(v1.m_position - v0.m_position, v2.m_position - v0.m_position));
+        v0.m_normal = v1.m_normal = v2.m_normal = N;
+        
+        vertices.push_back(v0);
+        vertices.push_back(v1);
+        vertices.push_back(v2);
 
-                vertices.push_back(v0);
-                vertices.push_back(v1);
-                vertices.push_back(v2);
-            }
-        }
-    }
-    else {
-        for (const Vertex& vertex : geometry.vertices()) {
-            vertices.push_back(vertex);
-        }
-
-        for (const Face& face : geometry.faces()) {
-            unsigned v0 = face.m_indices[0];
-
-            for (unsigned i = 2; i < face.m_num_indices; i++) {
-                unsigned v1 = face.m_indices[i - 1];
-                unsigned v2 = face.m_indices[i];
-
-                elements.push_back(v0);
-                elements.push_back(v1);
-                elements.push_back(v2);
-            }
-        }
+        elements.push_back(vertices.size() - 3);
+        elements.push_back(vertices.size() - 2);
+        elements.push_back(vertices.size() - 1);
     }
 
     init(vertices, elements);

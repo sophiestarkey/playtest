@@ -133,7 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\geometry\geometry.cpp" />
+    <ClCompile Include="src\geometry\collision_mesh.cpp" />
     <ClCompile Include="src\gl.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\graphics\camera.cpp" />
@@ -145,7 +145,7 @@
     <ClCompile Include="src\utility\gl_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\geometry\geometry.h" />
+    <ClInclude Include="src\geometry\collision_mesh.h" />
     <ClInclude Include="src\graphics\camera.h" />
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\mesh_shader.h" />
