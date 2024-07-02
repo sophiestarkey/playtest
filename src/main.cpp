@@ -98,8 +98,8 @@ void run()
 {
     Camera camera;
     MeshShader mesh_shader;
-    Geometry terrain_geometry("res/models/terrain.obj");
-    Mesh terrain(terrain_geometry, true);
+    Geometry terrain_geometry("res/models/grandure.obj");
+    Mesh terrain(terrain_geometry);
     Mesh player("res/models/suzanne.obj");
     Transform player_transform;
 
