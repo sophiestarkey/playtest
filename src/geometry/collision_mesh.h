@@ -5,9 +5,7 @@
 #include <string>
 #include <vector>
 
-struct Triangle {
-    std::array<glm::vec3, 3> m_vertices;
-};
+#include "geometry.h"
 
 class CollisionMesh {
 public:

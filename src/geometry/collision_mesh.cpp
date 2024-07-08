@@ -25,11 +25,7 @@ CollisionMesh::CollisionMesh(const std::string& path)
             aiVector3D v1 = mesh->mVertices[face.mIndices[1]];
             aiVector3D v2 = mesh->mVertices[face.mIndices[2]];
 
-            Triangle triangle{};
-            triangle.m_vertices[0] = { v0.x, v0.y, v0.z };
-            triangle.m_vertices[1] = { v1.x, v1.y, v1.z };
-            triangle.m_vertices[2] = { v2.x, v2.y, v2.z };
-
+            Triangle triangle({ v0.x, v0.y, v0.z }, { v1.x, v1.y, v1.z }, {v2.x, v2.y, v2.z });
             m_triangles.push_back(triangle);
         }
     }

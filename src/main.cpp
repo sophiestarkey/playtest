@@ -162,9 +162,9 @@ void run()
             collision = false;
 
             for (const Triangle& triangle : terrain_geometry.triangles()) {
-                glm::vec3 v0 = triangle.m_vertices.at(0);
-                glm::vec3 v1 = triangle.m_vertices.at(1);
-                glm::vec3 v2 = triangle.m_vertices.at(2);
+                glm::vec3 v0 = triangle.points[0];
+                glm::vec3 v1 = triangle.points[1];
+                glm::vec3 v2 = triangle.points[2];
                 glm::vec3 N = glm::normalize(glm::cross(v1 - v0, v2 - v0));
 
                 if (intersect_triangle(player_transform.get_position(), player_velocity, v0, v1, v2)) {

@@ -19,9 +19,9 @@ Mesh::Mesh(const CollisionMesh& geometry)
     for (const Triangle& triangle : geometry.triangles()) {
         Vertex v0, v1, v2;
 
-        v0.m_position = triangle.m_vertices[0];
-        v1.m_position = triangle.m_vertices[1];
-        v2.m_position = triangle.m_vertices[2];
+        v0.m_position = triangle.points[0];
+        v1.m_position = triangle.points[1];
+        v2.m_position = triangle.points[2];
 
         glm::vec3 N = glm::normalize(glm::cross(v1.m_position - v0.m_position, v2.m_position - v0.m_position));
         v0.m_normal = v1.m_normal = v2.m_normal = N;
